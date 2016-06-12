@@ -1,18 +1,46 @@
     
 var Vue = require('vue');
+var VueRouter = require('vue-router');
+
 Vue.use(require('vue-resource'));
+Vue.use(VueRouter);
 
-import HelloWorld from './components/HelloWorld.vue';
+var router = new VueRouter({
+   history: false,
+   root: '/'
+});
+
+/*
+ * Import List
+ */
 
 
-new Vue({
-    el: '#app',
+import HomePage from './components/HomePage.vue';
+import ClientsPage from './components/ClientsPage.vue';
+import ClientDetailsPage from './components/ClientDetailsPage.vue';
 
+router.map({
+   '/': {
+      component: HomePage,
+   },
+
+   '/clients': {
+        component: ClientsPage
+   },
+
+   '/clients/:id': {
+        component: ClientDetailsPage
+   },
+
+});
+
+var App = Vue.extend({
     components: {
-        HelloWorld,
-    },
-
-    ready: function() {
-        alert('We are ready to go!');
+        HomePage,
+        ClientsPage
     }
 });
+
+router.start(App, '#app');
+
+
