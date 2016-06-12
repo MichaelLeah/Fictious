@@ -1,0 +1,21 @@
+{
+  "name": "fictitious",
+  "version": "1.0.0",
+  "description": "Client CRM system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Michael Leah",
+  "license": "ISC",
+  "dependencies": {
+    "vue": "^1.0.24",
+    "vue-resource": "^0.7.3",
+    "vueify": "^8.5.4"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "laravel-elixir": "^5.0.0",
+    "laravel-elixir-vueify": "^1.0.3"
+  }
+}
