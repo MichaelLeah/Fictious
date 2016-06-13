@@ -4,7 +4,7 @@ require 'database.php';
 
 $configuration = [
   'settings' => [
-    'displayErrorDetails' => true,
+    'displayErrorDetails' => false,
   ],
 ];
 

@@ -14869,9 +14869,65 @@ exports.insert = function (css) {
 }
 
 },{}],7:[function(require,module,exports){
-"use strict";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+
+var AppStore = require('../store/AppStore');
+var ApiService = require('../services/ApiService');
+
+var populateClientContactList = function populateClientContactList(clientId) {
+    ApiService.getContactListForClient(clientId, function (success) {
+        AppStore.setClientContactList(success.data.contactList);
+    }, function (failure) {
+        console.error(failure);
+    });
+};
+
+var populateClientDetails = function populateClientDetails(clientId) {
+    ApiService.getClientDetails(clientId, function (success) {
+        return success.client;
+    }, function (failure) {
+        console.error(failure);
+    });
+};
+
+exports.default = {
+    data: function data() {
+        return {
+            store: AppStore,
+            client: 'Test'
+        };
+    },
+
+    methods: {
+        updateClient: function updateClient(id) {
+            var postData = {
+                name: this.client.name,
+                address: this.client.address,
+                email: this.client.email,
+                number: this.client.number
+            };
+
+            ApiService.updateClient(id, postData, function (success) {
+                console.info(success);
+            }, function (failure) {
+                console.error(failure);
+            });
+        }
+    },
+
+    ready: function ready() {
+        populateClientContactList(this.$route.params.id);
+        this.client = this.store.getClient(this.$route.params.id);
+    }
+
+};
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<h1>Client View Page</h1>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<h1>Fictitious Ltd CRM - Client Details Page</h1>\n\n<div class=\"row\">\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"client.name\" type=\"text\" value=\"{{ client.name }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-3\">\n        <textarea class=\"form-control\" v-model=\"client.address\">{{ client.address }}</textarea>\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"client.number\" type=\"text\" value=\"{{ client.number }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"client.email\" type=\"text\" value=\"{{ client.email }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-6 col-lg-3\">\n        <button class=\"btn btn-default\" @click=\"updateClient(client.id)\">Save</button>\n    </div>\n</div>\n\n<ul>\n    <li v-for=\"contact in store.getClientContactList()\">\n        <a v-link=\"{ path: '/clients/' + contact.id }\">{{ contact.name }}</a>\n    </li>\n</ul>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -14882,18 +14938,13 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-a93be63c", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":5,"vue-hot-reload-api":2}],8:[function(require,module,exports){
+},{"../services/ApiService":12,"../store/AppStore":13,"vue":5,"vue-hot-reload-api":2}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _MainNavigation = require('./MainNavigation.vue');
-
-var _MainNavigation2 = _interopRequireDefault(_MainNavigation);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var AppStore = require('../store/AppStore');
 var ApiService = require('../services/ApiService');
@@ -14909,13 +14960,47 @@ var populateClientList = function populateClientList() {
 exports.default = {
     data: function data() {
         return {
-            store: AppStore
+            store: AppStore,
+            name: '',
+            address: '',
+            number: '',
+            email: ''
         };
     },
 
-    components: {
-        MainNavigation: _MainNavigation2.default
+    methods: {
+        createNewClient: function createNewClient() {
+            var postData = {
+                'name': this.name,
+                'address': this.address,
+                'number': this.number,
+                'email': this.email
+            };
+
+            var _self = this;
+
+            ApiService.createNewClient(postData, function (success) {
+                _self.name = '';
+                _self.address = '';
+                _self.number = '';
+                _self.email = '';
+
+                populateClientList();
+            }, function (failure) {
+                _self.error = 'Unable to create new client.';
+            });
+        },
+
+        deleteClient: function deleteClient(id) {
+            ApiService.deleteClient(id, function (success) {
+                populateClientList();
+            }, function (failure) {
+                console.error('Failed to delete client');
+            });
+        }
     },
+
+    components: {},
 
     ready: function ready() {
         populateClientList();
@@ -14923,7 +15008,7 @@ exports.default = {
 
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<main-navigation _v-3c7790f3=\"\"></main-navigation>\n\n<h1 _v-3c7790f3=\"\">Fictitious Ltd CRM - Clients Page</h1>\n\n<ul _v-3c7790f3=\"\">\n    <li v-for=\"client in store.getClientList()\" _v-3c7790f3=\"\">\n        <a v-link=\"{ path: '/clients/' + client.id }\" _v-3c7790f3=\"\">{{ client.name }}</a>\n    </li>\n</ul>\n\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<h1 _v-3c7790f3=\"\">Fictitious Ltd CRM - Clients Page</h1>\n\n<ul _v-3c7790f3=\"\">\n    <li v-for=\"client in store.getClientList()\" _v-3c7790f3=\"\">\n        <a v-link=\"{ path: '/clients/' + client.id }\" _v-3c7790f3=\"\">{{ client.name }}</a>  <span @click=\"deleteClient(client.id)\" _v-3c7790f3=\"\">X</span>\n    </li>\n</ul>\n\n<section _v-3c7790f3=\"\">\n    <div class=\"row\" _v-3c7790f3=\"\">\n        <div class=\"col-md-4\" _v-3c7790f3=\"\">\n            <h2 _v-3c7790f3=\"\">Add new client</h2>\n            <p v-if=\"error\" _v-3c7790f3=\"\">{{ error }}</p>\n            <input class=\"form-control\" type=\"text\" v-model=\"name\" placeholder=\"Client Name...\" _v-3c7790f3=\"\">\n            <textarea class=\"form-control\" v-model=\"address\" placeholder=\"Addresss\" _v-3c7790f3=\"\"></textarea>\n            <input class=\"form-control\" type=\"email\" v-model=\"email\" placeholder=\"Client Email...\" _v-3c7790f3=\"\">\n            <input class=\"form-control\" type=\"text\" v-model=\"number\" placeholder=\"Client Number...\" _v-3c7790f3=\"\">\n            <button class=\"btn btn-default\" @click=\"createNewClient\" _v-3c7790f3=\"\">Add new client</button>\n        </div>\n    </div>\n</section>\n\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -14934,34 +15019,23 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-3c7790f3", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../services/ApiService":12,"../store/AppStore":13,"./MainNavigation.vue":10,"vue":5,"vue-hot-reload-api":2}],9:[function(require,module,exports){
+},{"../services/ApiService":12,"../store/AppStore":13,"vue":5,"vue-hot-reload-api":2}],9:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\ndiv[_v-4e750dfc] {\n    background-color: lightgreen;\n}\n")
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
-var _MainNavigation = require('./MainNavigation.vue');
-
-var _MainNavigation2 = _interopRequireDefault(_MainNavigation);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 exports.default = {
     data: function data() {
-        return {
-            message: 'Hello World!'
-        };
+        return {};
     },
 
-    components: {
-        MainNavigation: _MainNavigation2.default
-    }
+    components: {}
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<main-navigation _v-4e750dfc=\"\"></main-navigation>\n\n<h1 _v-4e750dfc=\"\">Fictitious Ltd CRM</h1>\n<p _v-4e750dfc=\"\">Welcome Employee, here is the prototype of the CRM system. Here you will be able to view, edit and update your contacts and clients as well as seeing all conversations you have held with specific contacts.</p>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<h1 _v-4e750dfc=\"\">Fictitious Ltd CRM</h1>\n<p _v-4e750dfc=\"\">Welcome Employee, here is the prototype of the CRM system. Here you will be able to view, edit and update your contacts and clients as well as seeing all conversations you have held with specific contacts.</p>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -14976,7 +15050,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-4e750dfc", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"./MainNavigation.vue":10,"vue":5,"vue-hot-reload-api":2,"vueify/lib/insert-css":6}],10:[function(require,module,exports){
+},{"vue":5,"vue-hot-reload-api":2,"vueify/lib/insert-css":6}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15002,6 +15076,10 @@ if (module.hot) {(function () {  module.hot.accept()
 },{"vue":5,"vue-hot-reload-api":2}],11:[function(require,module,exports){
 'use strict';
 
+var _MainNavigation = require('./components/MainNavigation.vue');
+
+var _MainNavigation2 = _interopRequireDefault(_MainNavigation);
+
 var _HomePage = require('./components/HomePage.vue');
 
 var _HomePage2 = _interopRequireDefault(_HomePage);
@@ -15023,45 +15101,47 @@ Vue.use(require('vue-resource'));
 Vue.use(VueRouter);
 
 var router = new VueRouter({
-   history: false,
-   root: '/'
+    history: false,
+    root: '/'
 });
 
 /*
  * Import List
  */
 
+
 router.map({
-   '/': {
-      component: _HomePage2.default
-   },
+    '/': {
+        component: _HomePage2.default
+    },
 
-   '/clients': {
-      component: _ClientsPage2.default
-   },
+    '/clients': {
+        component: _ClientsPage2.default
+    },
 
-   '/clients/:id': {
-      component: _ClientDetailsPage2.default
-   }
+    '/clients/:id': {
+        component: _ClientDetailsPage2.default
+    }
 
 });
 
 var App = Vue.extend({
-   components: {
-      HomePage: _HomePage2.default,
-      ClientsPage: _ClientsPage2.default
-   }
+    components: {
+        HomePage: _HomePage2.default,
+        ClientsPage: _ClientsPage2.default,
+        ClientDetailsPage: _ClientDetailsPage2.default,
+        MainNavigation: _MainNavigation2.default
+    }
 });
 
 router.start(App, '#app');
 
-},{"./components/ClientDetailsPage.vue":7,"./components/ClientsPage.vue":8,"./components/HomePage.vue":9,"vue":5,"vue-resource":3,"vue-router":4}],12:[function(require,module,exports){
+},{"./components/ClientDetailsPage.vue":7,"./components/ClientsPage.vue":8,"./components/HomePage.vue":9,"./components/MainNavigation.vue":10,"vue":5,"vue-resource":3,"vue-router":4}],12:[function(require,module,exports){
 'use strict';
 
 var Vue = require('vue');
-var AppStore = require('../store/AppStore');
-
 Vue.use(require('vue-resource'));
+Vue.http.options.emulateJSON = true;
 
 var ApiService = {
     API_DOMAIN: 'http://api.fictitious.local',
@@ -15070,17 +15150,43 @@ var ApiService = {
     getClientList: function getClientList(onSuccess, onFailure) {
         var endpoint = this.API_DOMAIN + '/client';
         Vue.http.get(endpoint).then(onSuccess).catch(onFailure);
+    },
+
+    getContactListForClient: function getContactListForClient(id, onSuccess, onFailure) {
+        var endpoint = this.API_DOMAIN + '/client/' + id + '/contact-list';
+        Vue.http.get(endpoint).then(onSuccess).catch(onFailure);
+    },
+
+    createNewClient: function createNewClient(postData, onSuccess, onFailure) {
+        var endpoint = this.API_DOMAIN + '/client/add';
+        Vue.http.post(endpoint, postData).then(onSuccess).catch(onFailure);
+    },
+
+    getClientDetails: function getClientDetails(id, onSuccess, onFailure) {
+        var endpoint = this.API_DOMAIN + '/client/' + id;
+        Vue.http.get(endpoint).then(onSuccess).catch(onFailure);
+    },
+
+    updateClient: function updateClient(id, postData, onSuccess, onFailure) {
+        var endpoint = this.API_DOMAIN + '/client/update/' + id;
+        Vue.http.post(endpoint, postData).then(onSuccess).catch(onFailure);
+    },
+
+    deleteClient: function deleteClient(id, onSuccess, onFailure) {
+        var endpoint = this.API_DOMAIN + '/client/delete/' + id;
+        Vue.http.delete(endpoint).then(onSuccess).catch(onFailure);
     }
 
 };
 
 module.exports = ApiService;
 
-},{"../store/AppStore":13,"vue":5,"vue-resource":3}],13:[function(require,module,exports){
+},{"vue":5,"vue-resource":3}],13:[function(require,module,exports){
 "use strict";
 
 var AppStore = {
     _clientList: undefined,
+    _clientContactList: undefined,
 
     setClientList: function setClientList(clientList) {
         this._clientList = clientList;
@@ -15089,6 +15195,23 @@ var AppStore = {
 
     getClientList: function getClientList() {
         return this._clientList;
+    },
+
+    setClientContactList: function setClientContactList(contactList) {
+        this._clientContactList = contactList;
+    },
+    getClientContactList: function getClientContactList() {
+        return this._clientContactList;
+    },
+    getClient: function getClient(clientId) {
+        var _client = {};
+        this._clientList.forEach(function (client) {
+            if (client.id == clientId) {
+                _client = client;
+            }
+        });
+
+        return _client;
     }
 };
 

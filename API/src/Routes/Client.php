@@ -1,6 +1,7 @@
 <?php 
 
 use API\Models\Client;
+use API\Models\Contact;
 
 /**
  * /client Route
@@ -25,7 +26,7 @@ $app->get('/client', function ($request, $response, $args) {
     ]);
 
     $response->getBody()->write($successfulResponse);
-    return $response->withHeader('Access-Control-Allow-Origin', '*');
+    return $response;
 });
 
 /**
@@ -46,7 +47,7 @@ $app->get('/client/{id}', function ($request, $response, $args) {
             'error'  => 'Please ensure that the ID field is a valid integer value.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
     
     $client = Client::where('id', $clientId)->first();
@@ -62,7 +63,7 @@ $app->get('/client/{id}', function ($request, $response, $args) {
             'error'  => 'We could not find a client for the specified ID.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $successfulResponse = json_encode([
@@ -71,7 +72,43 @@ $app->get('/client/{id}', function ($request, $response, $args) {
     ]);
 
     $response->getBody()->write($successfulResponse);
-    return $response->withHeader('Access-Control-Allow-Origin', '*');
+    return $response;
+});
+
+/**
+ * /client/{id}/contact-list/ Route
+ * Returns a list of contacts for a given client id
+ */
+$app->get('/client/{id}/contact-list', function ($request, $response, $args) {
+    $client = Client::where('id', $args['id']);
+    if (!$client) {
+        $failedResponse = $response->withStatus(400);
+        $failedResponse->getBody()->write(json_encode([
+            'result' => false,
+            'error'  => 'We did not recognise that client ID'
+        ]));
+
+        return $failedResponse;
+    }
+
+    $contactList = Contact::where('client_id', $args['id'])->get();
+    if (!$contactList) {
+        $failedResponse = $response->withStatus(400);
+        $failedResponse->getBody()->write(json_encode([
+            'result' => false,
+            'error'  => 'We could not find any contacts for that client.'
+        ]));
+
+        return $failedResponse;
+    }
+
+    $successfulResponse = json_encode([
+        'result' => true,
+        'contactList' => $contactList
+    ]);
+
+    $response->getBody()->write($successfulResponse);
+    return $response;
 });
 
 /**
@@ -98,7 +135,7 @@ $app->post('/client/add', function ($request, $response, $args) {
                 'error'  => $field . ' is a required post parameter, please ensure it is passed across to the request.'
             ]));
 
-            return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+            return $failedResponse;
         }
     }
 
@@ -112,7 +149,7 @@ $app->post('/client/add', function ($request, $response, $args) {
             'error'  => 'Please ensure that you have supplied a valid email address for the request.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     /**
@@ -135,7 +172,7 @@ $app->post('/client/add', function ($request, $response, $args) {
             'error'  => 'We are unable to create a new client record at this time, please try again later.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $successfulResponse = json_encode([
@@ -144,7 +181,7 @@ $app->post('/client/add', function ($request, $response, $args) {
     ]);
 
     $response->getBody()->write($successfulResponse);
-    return $response->withHeader('Access-Control-Allow-Origin', '*');
+    return $response;
 });
 
 /**
@@ -165,7 +202,7 @@ $app->post('/client/update/{id}', function ($request, $response, $args) {
             'error'  => 'Please ensure that the ID field is a valid integer value.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
     
     /**
@@ -179,7 +216,7 @@ $app->post('/client/update/{id}', function ($request, $response, $args) {
             'error'  => 'We could not find a client for the specified ID.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     /**
@@ -201,7 +238,7 @@ $app->post('/client/update/{id}', function ($request, $response, $args) {
             'error'  => 'No valid update fields passed through to the request.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     /**
@@ -215,7 +252,7 @@ $app->post('/client/update/{id}', function ($request, $response, $args) {
             'error'  => 'We could not update that client at this time, please try again later.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $successfulResponse = json_encode([
@@ -224,7 +261,7 @@ $app->post('/client/update/{id}', function ($request, $response, $args) {
     ]);
 
     $response->getBody()->write($successfulResponse);
-    return $response->withHeader('Access-Control-Allow-Origin', '*');
+    return $response;
 });
 
 /**
@@ -245,7 +282,7 @@ $app->delete('/client/delete/{id}', function ($request, $response, $args) {
             'error'  => 'Please ensure that the ID field is a valid integer value.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
     
     /**
@@ -259,7 +296,7 @@ $app->delete('/client/delete/{id}', function ($request, $response, $args) {
             'error'  => 'We could not find a client for the specified ID.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $clientDeleted = $client->delete();
@@ -270,7 +307,7 @@ $app->delete('/client/delete/{id}', function ($request, $response, $args) {
             'error'  => 'We could not delete that client at this time, please try again later'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $successfulResponse = json_encode([
@@ -278,5 +315,5 @@ $app->delete('/client/delete/{id}', function ($request, $response, $args) {
     ]);
 
     $response->getBody()->write($successfulResponse);
-    return $response->withHeader('Access-Control-Allow-Origin', '*');
+    return $response;
 });

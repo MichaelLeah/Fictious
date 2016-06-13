@@ -22,7 +22,7 @@ $app->get('/conversation/client/{id}', function ($request, $response, $args) {
             'error'  => 'Invalid Client ID passed through to end point.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $conversations = 
@@ -45,7 +45,7 @@ $app->get('/conversation/client/{id}', function ($request, $response, $args) {
             'error'  => 'Unable to find any conversations for specified client id'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $successfulResponse = json_encode([
@@ -54,7 +54,7 @@ $app->get('/conversation/client/{id}', function ($request, $response, $args) {
     ]);
 
     $response->getBody()->write($successfulResponse);
-    return $response->withHeader('Access-Control-Allow-Origin', '*'); 
+    return $response;
 });
 
 /**
@@ -73,7 +73,7 @@ $app->get('/conversation/contact/{id}', function ($request, $response, $args) {
             'error'  => 'Invalid Contact ID passed through to end point.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $conversations = 
@@ -96,7 +96,7 @@ $app->get('/conversation/contact/{id}', function ($request, $response, $args) {
             'error'  => 'Unable to find any conversations for specified contact id'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $successfulResponse = json_encode([
@@ -105,7 +105,7 @@ $app->get('/conversation/contact/{id}', function ($request, $response, $args) {
     ]);
 
     $response->getBody()->write($successfulResponse);
-    return $response->withHeader('Access-Control-Allow-Origin', '*'); 
+    return $response;
 });
 
 /**
@@ -127,7 +127,7 @@ $app->post('/conversation/add', function ($request, $response, $args) {
                 'error'  => $field . ' is a required post parameter, please ensure it is passed across to the request.'
             ]));
 
-            return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+            return $failedResponse;
         }
     }
 
@@ -142,7 +142,7 @@ $app->post('/conversation/add', function ($request, $response, $args) {
             'error'  => 'Please ensure all passed over IDs are correct.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
 
@@ -166,7 +166,7 @@ $app->post('/conversation/add', function ($request, $response, $args) {
             'error'  => 'We are unable to create a new conversation record at this time, please try again later.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $successfulResponse = json_encode([
@@ -175,5 +175,5 @@ $app->post('/conversation/add', function ($request, $response, $args) {
     ]);
 
     $response->getBody()->write($successfulResponse);
-    return $response->withHeader('Access-Control-Allow-Origin', '*');
+    return $response;
 });

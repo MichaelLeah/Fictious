@@ -13,11 +13,11 @@ var router = new VueRouter({
 /*
  * Import List
  */
-
-
+import MainNavigation from './components/MainNavigation.vue';
 import HomePage from './components/HomePage.vue';
 import ClientsPage from './components/ClientsPage.vue';
 import ClientDetailsPage from './components/ClientDetailsPage.vue';
+
 
 router.map({
    '/': {
@@ -37,7 +37,9 @@ router.map({
 var App = Vue.extend({
     components: {
         HomePage,
-        ClientsPage
+        ClientsPage,
+        ClientDetailsPage,
+        MainNavigation
     }
 });
 

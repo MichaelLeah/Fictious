@@ -19,7 +19,7 @@ $app->get('/contact', function ($request, $response, $args) {
             'error'  => 'We were unable to load all contacts at this time, please try again later.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $successfulResponse = json_encode([
@@ -28,7 +28,7 @@ $app->get('/contact', function ($request, $response, $args) {
     ]);
 
     $response->getBody()->write($successfulResponse);
-    return $response->withHeader('Access-Control-Allow-Origin', '*');
+    return $response;
 });
 
 /**
@@ -49,7 +49,7 @@ $app->get('/contact/{id}', function ($request, $response, $args) {
             'error'  => 'Please ensure that the ID field is a valid integer value.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
     
     $contact = Contact::where('Contact.id', $contactId)
@@ -68,7 +68,7 @@ $app->get('/contact/{id}', function ($request, $response, $args) {
             'error'  => 'We could not find a contact for the specified ID.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $successfulResponse = json_encode([
@@ -77,7 +77,7 @@ $app->get('/contact/{id}', function ($request, $response, $args) {
     ]);
 
     $response->getBody()->write($successfulResponse);
-    return $response->withHeader('Access-Control-Allow-Origin', '*');
+    return $response;
 });
 
 /**
@@ -105,7 +105,7 @@ $app->post('/contact/add', function ($request, $response, $args) {
                 'error'  => $field . ' is a required post parameter, please ensure it is passed across to the request.'
             ]));
 
-            return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+            return $failedResponse;
         }
     }
 
@@ -120,7 +120,7 @@ $app->post('/contact/add', function ($request, $response, $args) {
             'error'  => 'We could not find the Client record associated to the passed client id.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     /**
@@ -133,7 +133,7 @@ $app->post('/contact/add', function ($request, $response, $args) {
             'error'  => 'Please ensure that you have supplied a valid email address for the request.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     /**
@@ -157,7 +157,7 @@ $app->post('/contact/add', function ($request, $response, $args) {
             'error'  => 'We are unable to create a new contact record at this time, please try again later.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $successfulResponse = json_encode([
@@ -187,7 +187,7 @@ $app->post('/contact/update/{id}', function ($request, $response, $args) {
             'error'  => 'Please ensure that the ID field is a valid integer value.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
     
     /**
@@ -205,7 +205,7 @@ $app->post('/contact/update/{id}', function ($request, $response, $args) {
             'error'  => 'We could not find a contact for the specified ID.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     /**
@@ -227,7 +227,7 @@ $app->post('/contact/update/{id}', function ($request, $response, $args) {
             'error'  => 'No valid update fields passed through to the request.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     /**
@@ -241,7 +241,7 @@ $app->post('/contact/update/{id}', function ($request, $response, $args) {
             'error'  => 'We could not update that contact at this time, please try again later.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $successfulResponse = json_encode([
@@ -250,7 +250,7 @@ $app->post('/contact/update/{id}', function ($request, $response, $args) {
     ]);
 
     $response->getBody()->write($successfulResponse);
-    return $response->withHeader('Access-Control-Allow-Origin', '*');
+    return $response;
 });
 
 /**
@@ -271,7 +271,7 @@ $app->delete('/contact/delete/{id}', function ($request, $response, $args) {
             'error'  => 'Please ensure that the ID field is a valid integer value.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
     
     /**
@@ -285,7 +285,7 @@ $app->delete('/contact/delete/{id}', function ($request, $response, $args) {
             'error'  => 'We could not find a contact for the specified ID.'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $contactDeleted = $contact->delete();
@@ -296,7 +296,7 @@ $app->delete('/contact/delete/{id}', function ($request, $response, $args) {
             'error'  => 'We could not delete that contact at this time, please try again later'
         ]));
 
-        return $failedResponse->withHeader('Access-Control-Allow-Origin', '*');
+        return $failedResponse;
     }
 
     $successfulResponse = json_encode([
@@ -304,5 +304,5 @@ $app->delete('/contact/delete/{id}', function ($request, $response, $args) {
     ]);
 
     $response->getBody()->write($successfulResponse);
-    return $response->withHeader('Access-Control-Allow-Origin', '*');
+    return $response;
 });
