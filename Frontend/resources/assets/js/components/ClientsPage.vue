@@ -12,11 +12,14 @@
             <div class="col-md-4">
                 <h2>Add new client</h2>
                 <p v-if="error">{{ error }}</p>
-                <input class="form-control" type="text" v-model="name" placeholder="Client Name...">
-                <textarea class="form-control" v-model="address" placeholder="Addresss"></textarea>
-                <input class="form-control" type="email" v-model="email" placeholder="Client Email...">
-                <input class="form-control" type="text" v-model="number" placeholder="Client Number...">
-                <button class="btn btn-default" @click="createNewClient">Add new client</button>
+
+                <div class="input-group">
+                    <input class="form-control" type="text" v-model="name" placeholder="Client Name...">
+                    <textarea class="form-control" v-model="address" placeholder="Addresss"></textarea>
+                    <input class="form-control" type="email" v-model="email" placeholder="Client Email...">
+                    <input class="form-control" type="text" v-model="number" placeholder="Client Number...">
+                    <button class="btn btn-default" @click="createNewClient">Add new client</button>
+                </div>
             </div>
         </div>
     </section>

@@ -14899,7 +14899,11 @@ exports.default = {
     data: function data() {
         return {
             store: AppStore,
-            client: 'Test'
+            client: '',
+            name: '',
+            jobrole: '',
+            email: '',
+            number: ''
         };
     },
 
@@ -14917,6 +14921,38 @@ exports.default = {
             }, function (failure) {
                 console.error(failure);
             });
+        },
+
+        deleteContact: function deleteContact(id) {
+            var _self = this;
+            ApiService.deleteContact(id, function (success) {
+                populateClientContactList(_self.client.id);
+            }, function (failure) {
+                console.error(failure);
+            });
+        },
+
+        createNewContact: function createNewContact() {
+            var postData = {
+                name: this.name,
+                job_role: this.jobrole,
+                email: this.email,
+                number: this.number,
+                client_id: this.client.id
+            };
+
+            var _self = this;
+
+            ApiService.createNewContact(postData, function (success) {
+                _self.name = '';
+                _self.jobrole = '';
+                _self.email = '';
+                _self.number = '';
+
+                populateClientContactList(_self.client.id);
+            }, function (failure) {
+                console.error(failure);
+            });
         }
     },
 
@@ -14927,7 +14963,7 @@ exports.default = {
 
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<h1>Fictitious Ltd CRM - Client Details Page</h1>\n\n<div class=\"row\">\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"client.name\" type=\"text\" value=\"{{ client.name }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-3\">\n        <textarea class=\"form-control\" v-model=\"client.address\">{{ client.address }}</textarea>\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"client.number\" type=\"text\" value=\"{{ client.number }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"client.email\" type=\"text\" value=\"{{ client.email }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-6 col-lg-3\">\n        <button class=\"btn btn-default\" @click=\"updateClient(client.id)\">Save</button>\n    </div>\n</div>\n\n<ul>\n    <li v-for=\"contact in store.getClientContactList()\">\n        <a v-link=\"{ path: '/clients/' + contact.id }\">{{ contact.name }}</a>\n    </li>\n</ul>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<h1>Fictitious Ltd CRM - Client Details Page</h1>\n\n<div class=\"row\">\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"client.name\" type=\"text\" value=\"{{ client.name }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-3\">\n        <textarea class=\"form-control\" v-model=\"client.address\">{{ client.address }}</textarea>\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"client.number\" type=\"text\" value=\"{{ client.number }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"client.email\" type=\"text\" value=\"{{ client.email }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-6 col-lg-3\">\n        <button class=\"btn btn-default\" @click=\"updateClient(client.id)\">Save</button>\n    </div>\n</div>\n\n<ul>\n    <li v-for=\"contact in store.getClientContactList()\">\n        <a v-link=\"{ path: '/contact/' + contact.id }\">{{ contact.name }}</a> <span @click=\"deleteContact(contact.id)\">X</span>\n    </li>\n</ul>\n\n<div class=\"input-group\">\n     <input class=\"form-control\" type=\"text\" v-model=\"name\" placeholder=\"Contact Name...\">\n    <textarea class=\"form-control\" v-model=\"jobrole\" placeholder=\"Job role\"></textarea>\n    <input class=\"form-control\" type=\"email\" v-model=\"email\" placeholder=\"Contact Email...\">\n    <input class=\"form-control\" type=\"text\" v-model=\"number\" placeholder=\"Contact Number...\">\n    <button class=\"btn btn-default\" @click=\"createNewContact\">Add new contact</button>\n</div>\n\n\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -14938,7 +14974,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-a93be63c", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../services/ApiService":12,"../store/AppStore":13,"vue":5,"vue-hot-reload-api":2}],8:[function(require,module,exports){
+},{"../services/ApiService":13,"../store/AppStore":14,"vue":5,"vue-hot-reload-api":2}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -15008,7 +15044,7 @@ exports.default = {
 
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<h1 _v-3c7790f3=\"\">Fictitious Ltd CRM - Clients Page</h1>\n\n<ul _v-3c7790f3=\"\">\n    <li v-for=\"client in store.getClientList()\" _v-3c7790f3=\"\">\n        <a v-link=\"{ path: '/clients/' + client.id }\" _v-3c7790f3=\"\">{{ client.name }}</a>  <span @click=\"deleteClient(client.id)\" _v-3c7790f3=\"\">X</span>\n    </li>\n</ul>\n\n<section _v-3c7790f3=\"\">\n    <div class=\"row\" _v-3c7790f3=\"\">\n        <div class=\"col-md-4\" _v-3c7790f3=\"\">\n            <h2 _v-3c7790f3=\"\">Add new client</h2>\n            <p v-if=\"error\" _v-3c7790f3=\"\">{{ error }}</p>\n            <input class=\"form-control\" type=\"text\" v-model=\"name\" placeholder=\"Client Name...\" _v-3c7790f3=\"\">\n            <textarea class=\"form-control\" v-model=\"address\" placeholder=\"Addresss\" _v-3c7790f3=\"\"></textarea>\n            <input class=\"form-control\" type=\"email\" v-model=\"email\" placeholder=\"Client Email...\" _v-3c7790f3=\"\">\n            <input class=\"form-control\" type=\"text\" v-model=\"number\" placeholder=\"Client Number...\" _v-3c7790f3=\"\">\n            <button class=\"btn btn-default\" @click=\"createNewClient\" _v-3c7790f3=\"\">Add new client</button>\n        </div>\n    </div>\n</section>\n\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<h1 _v-3c7790f3=\"\">Fictitious Ltd CRM - Clients Page</h1>\n\n<ul _v-3c7790f3=\"\">\n    <li v-for=\"client in store.getClientList()\" _v-3c7790f3=\"\">\n        <a v-link=\"{ path: '/clients/' + client.id }\" _v-3c7790f3=\"\">{{ client.name }}</a>  <span @click=\"deleteClient(client.id)\" _v-3c7790f3=\"\">X</span>\n    </li>\n</ul>\n\n<section _v-3c7790f3=\"\">\n    <div class=\"row\" _v-3c7790f3=\"\">\n        <div class=\"col-md-4\" _v-3c7790f3=\"\">\n            <h2 _v-3c7790f3=\"\">Add new client</h2>\n            <p v-if=\"error\" _v-3c7790f3=\"\">{{ error }}</p>\n\n            <div class=\"input-group\" _v-3c7790f3=\"\">\n                <input class=\"form-control\" type=\"text\" v-model=\"name\" placeholder=\"Client Name...\" _v-3c7790f3=\"\">\n                <textarea class=\"form-control\" v-model=\"address\" placeholder=\"Addresss\" _v-3c7790f3=\"\"></textarea>\n                <input class=\"form-control\" type=\"email\" v-model=\"email\" placeholder=\"Client Email...\" _v-3c7790f3=\"\">\n                <input class=\"form-control\" type=\"text\" v-model=\"number\" placeholder=\"Client Number...\" _v-3c7790f3=\"\">\n                <button class=\"btn btn-default\" @click=\"createNewClient\" _v-3c7790f3=\"\">Add new client</button>\n            </div>\n        </div>\n    </div>\n</section>\n\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -15019,7 +15055,83 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-3c7790f3", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"../services/ApiService":12,"../store/AppStore":13,"vue":5,"vue-hot-reload-api":2}],9:[function(require,module,exports){
+},{"../services/ApiService":13,"../store/AppStore":14,"vue":5,"vue-hot-reload-api":2}],9:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n")
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+
+var AppStore = require('../store/AppStore');
+var ApiService = require('../services/ApiService');
+
+var populateContactDetails = function populateContactDetails(contactId) {
+    ApiService.getContactDetails(contactId, function (success) {
+        return success.contact;
+    }, function (failure) {
+        console.error(failure);
+    });
+};
+
+var populateContactConversations = function populateContactConversations(contactId) {
+    ApiService.getContactConversations(contactId, function (success) {
+        AppStore.setContactConversations(success.data.conversations);
+    }, function (failure) {
+        console.error(failure);
+    });
+};
+
+exports.default = {
+    data: function data() {
+        return {
+            store: AppStore,
+            contact: '',
+            conversations: ''
+        };
+    },
+
+    methods: {
+        updateContact: function updateContact(id) {
+            var postData = {
+                name: this.contact.name,
+                job_role: this.contact.job_role,
+                email: this.contact.email,
+                number: this.contact.number
+            };
+
+            ApiService.updateContact(id, postData, function (success) {
+                console.info(success);
+            }, function (failure) {
+                console.error(failure);
+            });
+        }
+    },
+
+    ready: function ready() {
+        this.contact = this.store.getContact(this.$route.params.id);
+        populateContactConversations(this.$route.params.id);
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<h1>Contact Details for: {{ contact.name }}</h1>\n<div class=\"row\">\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"contact.name\" type=\"text\" value=\"{{ contact.name }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-3\">\n        <textarea class=\"form-control\" v-model=\"contact.job_role\">{{ contact.job_role }}</textarea>\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"contact.number\" type=\"text\" value=\"{{ contact.number }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"contact.email\" type=\"text\" value=\"{{ contact.email }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-6 col-lg-3\">\n        <button class=\"btn btn-default\" @click=\"updateContact(contact.id)\">Save</button>\n    </div>\n</div>\n\n<h1>Conversations</h1>\n\n<div class=\"row\">\n    <div class=\"col-xs-12 col-md-6\">\n        <textarea class=\"form-control\" v-model=\"newMessage\"></textarea>\n    </div>\n    <div class=\"col-xs-12 col-md-6\">\n        <button class=\"btn btn-default\">Save Message</button>\n    </div>\n</div>\n\n<hr>\n\n<ul>\n    <li v-for=\"message in store.getContactConversations()\">\n        {{ message.details }}\n    </li>\n</ul>\n\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-62019fb6", module.exports)
+  } else {
+    hotAPI.update("_v-62019fb6", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"../services/ApiService":13,"../store/AppStore":14,"vue":5,"vue-hot-reload-api":2,"vueify/lib/insert-css":6}],10:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\ndiv[_v-4e750dfc] {\n    background-color: lightgreen;\n}\n")
 "use strict";
@@ -15050,7 +15162,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-4e750dfc", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":5,"vue-hot-reload-api":2,"vueify/lib/insert-css":6}],10:[function(require,module,exports){
+},{"vue":5,"vue-hot-reload-api":2,"vueify/lib/insert-css":6}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15073,7 +15185,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-2a153121", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":5,"vue-hot-reload-api":2}],11:[function(require,module,exports){
+},{"vue":5,"vue-hot-reload-api":2}],12:[function(require,module,exports){
 'use strict';
 
 var _MainNavigation = require('./components/MainNavigation.vue');
@@ -15091,6 +15203,10 @@ var _ClientsPage2 = _interopRequireDefault(_ClientsPage);
 var _ClientDetailsPage = require('./components/ClientDetailsPage.vue');
 
 var _ClientDetailsPage2 = _interopRequireDefault(_ClientDetailsPage);
+
+var _ContactDetailsPage = require('./components/ContactDetailsPage.vue');
+
+var _ContactDetailsPage2 = _interopRequireDefault(_ContactDetailsPage);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -15121,6 +15237,10 @@ router.map({
 
     '/clients/:id': {
         component: _ClientDetailsPage2.default
+    },
+
+    '/contact/:id': {
+        component: _ContactDetailsPage2.default
     }
 
 });
@@ -15130,13 +15250,14 @@ var App = Vue.extend({
         HomePage: _HomePage2.default,
         ClientsPage: _ClientsPage2.default,
         ClientDetailsPage: _ClientDetailsPage2.default,
+        ContactDetailsPage: _ContactDetailsPage2.default,
         MainNavigation: _MainNavigation2.default
     }
 });
 
 router.start(App, '#app');
 
-},{"./components/ClientDetailsPage.vue":7,"./components/ClientsPage.vue":8,"./components/HomePage.vue":9,"./components/MainNavigation.vue":10,"vue":5,"vue-resource":3,"vue-router":4}],12:[function(require,module,exports){
+},{"./components/ClientDetailsPage.vue":7,"./components/ClientsPage.vue":8,"./components/ContactDetailsPage.vue":9,"./components/HomePage.vue":10,"./components/MainNavigation.vue":11,"vue":5,"vue-resource":3,"vue-router":4}],13:[function(require,module,exports){
 'use strict';
 
 var Vue = require('vue');
@@ -15146,7 +15267,6 @@ Vue.http.options.emulateJSON = true;
 var ApiService = {
     API_DOMAIN: 'http://api.fictitious.local',
 
-    // Get Client list from the API
     getClientList: function getClientList(onSuccess, onFailure) {
         var endpoint = this.API_DOMAIN + '/client';
         Vue.http.get(endpoint).then(onSuccess).catch(onFailure);
@@ -15175,18 +15295,38 @@ var ApiService = {
     deleteClient: function deleteClient(id, onSuccess, onFailure) {
         var endpoint = this.API_DOMAIN + '/client/delete/' + id;
         Vue.http.delete(endpoint).then(onSuccess).catch(onFailure);
-    }
+    },
 
+    createNewContact: function createNewContact(postData, onSuccess, onFailure) {
+        var endpoint = this.API_DOMAIN + '/contact/add';
+        Vue.http.post(endpoint, postData).then(onSuccess).catch(onFailure);
+    },
+
+    updateContact: function updateContact(id, postData, onSuccess, onFailure) {
+        var endpoint = this.API_DOMAIN + '/contact/update/' + id;
+        Vue.http.post(endpoint, postData).then(onSuccess).catch(onFailure);
+    },
+
+    deleteContact: function deleteContact(id, onSuccess, onFailure) {
+        var endpoint = this.API_DOMAIN + '/contact/delete/' + id;
+        Vue.http.delete(endpoint).then(onSuccess).catch(onFailure);
+    },
+
+    getContactConversations: function getContactConversations(id, onSuccess, onFailure) {
+        var endpoint = this.API_DOMAIN + '/conversation/contact/' + id;
+        Vue.http.get(endpoint).then(onSuccess).catch(onFailure);
+    }
 };
 
 module.exports = ApiService;
 
-},{"vue":5,"vue-resource":3}],13:[function(require,module,exports){
+},{"vue":5,"vue-resource":3}],14:[function(require,module,exports){
 "use strict";
 
 var AppStore = {
     _clientList: undefined,
     _clientContactList: undefined,
+    _contactConversations: undefined,
 
     setClientList: function setClientList(clientList) {
         this._clientList = clientList;
@@ -15212,11 +15352,27 @@ var AppStore = {
         });
 
         return _client;
+    },
+    getContact: function getContact(contactId) {
+        var _contact = {};
+        this._clientContactList.forEach(function (contact) {
+            if (contact.id == contactId) {
+                _contact = contact;
+            }
+        });
+
+        return _contact;
+    },
+    setContactConversations: function setContactConversations(conversations) {
+        this._contactConversations = conversations;
+    },
+    getContactConversations: function getContactConversations() {
+        return this._contactConversations;
     }
 };
 
 module.exports = AppStore;
 
-},{}]},{},[11]);
+},{}]},{},[12]);
 
 //# sourceMappingURL=main.js.map

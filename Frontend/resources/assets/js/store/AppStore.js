@@ -1,6 +1,7 @@
 const AppStore = {
     _clientList: undefined,
     _clientContactList: undefined,
+    _contactConversations: undefined,
 
     setClientList(clientList) {
         this._clientList = clientList;
@@ -27,6 +28,25 @@ const AppStore = {
         });
 
         return _client;
+    },
+
+    getContact(contactId) {
+        var _contact = {};
+        this._clientContactList.forEach(function(contact) {
+            if (contact.id == contactId) {
+                _contact = contact;
+            }
+        });
+
+        return _contact;
+    },
+
+    setContactConversations(conversations) {
+        this._contactConversations = conversations;
+    },
+
+    getContactConversations() {
+        return this._contactConversations;
     }
 }
 

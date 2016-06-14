@@ -21,9 +21,19 @@
 
     <ul>
         <li v-for="contact in store.getClientContactList()">
-            <a v-link="{ path: '/clients/' + contact.id }">{{ contact.name }}</a>
+            <a v-link="{ path: '/contact/' + contact.id }">{{ contact.name }}</a> <span @click="deleteContact(contact.id)">X</span>
         </li>
     </ul>
+
+    <div class="input-group">
+         <input class="form-control" type="text" v-model="name" placeholder="Contact Name...">
+        <textarea class="form-control" v-model="jobrole" placeholder="Job role"></textarea>
+        <input class="form-control" type="email" v-model="email" placeholder="Contact Email...">
+        <input class="form-control" type="text" v-model="number" placeholder="Contact Number...">
+        <button class="btn btn-default" @click="createNewContact">Add new contact</button>
+    </div>
+
+
 </template>
 
 <style></style>
@@ -55,7 +65,11 @@
         data: function() {
             return {
                 store: AppStore,
-                client: 'Test',
+                client: '',
+                name: '',
+                jobrole: '',
+                email: '',
+                number: '',
             }
         },
 
@@ -67,10 +81,46 @@
                     email: this.client.email, 
                     number: this.client.number
                 };
-                
+
                 ApiService.updateClient(id, postData, 
                     function(success) {
                         console.info(success);
+                    },
+                    function(failure) {
+                        console.error(failure);
+                    });
+            },
+
+            deleteContact: function(id) {
+                var _self = this;
+                ApiService.deleteContact(id, 
+                    function(success) {
+                        populateClientContactList(_self.client.id);
+                    },
+                    function(failure) {
+                        console.error(failure);
+                    });
+            },
+
+            createNewContact: function() {
+                var postData = {
+                    name: this.name,
+                    job_role: this.jobrole,
+                    email: this.email,
+                    number: this.number,
+                    client_id: this.client.id
+                }
+
+                var _self = this;
+
+                ApiService.createNewContact(postData, 
+                    function(success) {
+                        _self.name = '';
+                        _self.jobrole = '';
+                        _self.email = '';
+                        _self.number = '';
+
+                        populateClientContactList(_self.client.id);
                     },
                     function(failure) {
                         console.error(failure);

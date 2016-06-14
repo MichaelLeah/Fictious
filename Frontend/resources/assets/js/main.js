@@ -17,6 +17,7 @@ import MainNavigation from './components/MainNavigation.vue';
 import HomePage from './components/HomePage.vue';
 import ClientsPage from './components/ClientsPage.vue';
 import ClientDetailsPage from './components/ClientDetailsPage.vue';
+import ContactDetailsPage from './components/ContactDetailsPage.vue';
 
 
 router.map({
@@ -32,6 +33,10 @@ router.map({
         component: ClientDetailsPage
    },
 
+   '/contact/:id': {
+        component: ContactDetailsPage 
+   }
+
 });
 
 var App = Vue.extend({
@@ -39,6 +44,7 @@ var App = Vue.extend({
         HomePage,
         ClientsPage,
         ClientDetailsPage,
+        ContactDetailsPage,
         MainNavigation
     }
 });

@@ -166,7 +166,7 @@ $app->post('/contact/add', function ($request, $response, $args) {
     ]);
 
     $response->getBody()->write($successfulResponse);
-    return $response->withHeader('Access-Control-Allow-Origin', '*');
+    return $response;
 });
 
 /**
