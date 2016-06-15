@@ -53,6 +53,11 @@ const ApiService = {
     getContactConversations: function(id, onSuccess, onFailure) {
         var endpoint = this.API_DOMAIN + '/conversation/contact/' + id;
         Vue.http.get(endpoint).then(onSuccess).catch(onFailure);
+    },
+
+    createNewMessage: function(postData, onSuccess, onFailure) {
+        var endpoint = this.API_DOMAIN + '/conversation/add';
+        Vue.http.post(endpoint, postData).then(onSuccess).catch(onFailure);
     }
 };
 

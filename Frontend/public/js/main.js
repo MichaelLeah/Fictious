@@ -15089,7 +15089,8 @@ exports.default = {
         return {
             store: AppStore,
             contact: '',
-            conversations: ''
+            conversations: '',
+            newMessage: ''
         };
     },
 
@@ -15107,16 +15108,34 @@ exports.default = {
             }, function (failure) {
                 console.error(failure);
             });
+        },
+
+        saveMessage: function saveMessage() {
+            var postData = {
+                details: this.newMessage,
+                employee_id: 1,
+                contact_id: this.contact.id,
+                client_id: this.contact.client_id
+            };
+
+            var _self = this;
+            ApiService.createNewMessage(postData, function (success) {
+                _self.newMessage = '';
+                populateContactConversations(_self.contact.id);
+            }, function (failure) {
+                console.error(failure);
+            });
         }
     },
 
     ready: function ready() {
         this.contact = this.store.getContact(this.$route.params.id);
         populateContactConversations(this.$route.params.id);
+        this.clientId = this.$route.params.id;
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<h1>Contact Details for: {{ contact.name }}</h1>\n<div class=\"row\">\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"contact.name\" type=\"text\" value=\"{{ contact.name }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-3\">\n        <textarea class=\"form-control\" v-model=\"contact.job_role\">{{ contact.job_role }}</textarea>\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"contact.number\" type=\"text\" value=\"{{ contact.number }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"contact.email\" type=\"text\" value=\"{{ contact.email }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-6 col-lg-3\">\n        <button class=\"btn btn-default\" @click=\"updateContact(contact.id)\">Save</button>\n    </div>\n</div>\n\n<h1>Conversations</h1>\n\n<div class=\"row\">\n    <div class=\"col-xs-12 col-md-6\">\n        <textarea class=\"form-control\" v-model=\"newMessage\"></textarea>\n    </div>\n    <div class=\"col-xs-12 col-md-6\">\n        <button class=\"btn btn-default\">Save Message</button>\n    </div>\n</div>\n\n<hr>\n\n<ul>\n    <li v-for=\"message in store.getContactConversations()\">\n        {{ message.details }}\n    </li>\n</ul>\n\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<h1>Contact Details for: {{ contact.name }}</h1>\n<div class=\"row\">\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"contact.name\" type=\"text\" value=\"{{ contact.name }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-3\">\n        <textarea class=\"form-control\" v-model=\"contact.job_role\">{{ contact.job_role }}</textarea>\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"contact.number\" type=\"text\" value=\"{{ contact.number }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-4 col-lg-2\">\n        <input class=\"form-control\" v-model=\"contact.email\" type=\"text\" value=\"{{ contact.email }}\">\n    </div>\n    <div class=\"col-xs-12 col-md-6 col-lg-3\">\n        <button class=\"btn btn-default\" @click=\"updateContact(contact.id)\">Save</button>\n    </div>\n</div>\n\n<h1>Conversations</h1>\n\n<div class=\"row\">\n    <div class=\"col-xs-12 col-md-6\">\n        <textarea class=\"form-control\" v-model=\"newMessage\"></textarea>\n    </div>\n    <div class=\"col-xs-12 col-md-6\">\n        <button class=\"btn btn-default\" @click=\"saveMessage()\">Save Message</button>\n    </div>\n</div>\n\n<hr>\n\n<ul>\n    <li v-for=\"message in store.getContactConversations()\">\n        {{ message.details }}\n    </li>\n</ul>\n\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -15315,6 +15334,11 @@ var ApiService = {
     getContactConversations: function getContactConversations(id, onSuccess, onFailure) {
         var endpoint = this.API_DOMAIN + '/conversation/contact/' + id;
         Vue.http.get(endpoint).then(onSuccess).catch(onFailure);
+    },
+
+    createNewMessage: function createNewMessage(postData, onSuccess, onFailure) {
+        var endpoint = this.API_DOMAIN + '/conversation/add';
+        Vue.http.post(endpoint, postData).then(onSuccess).catch(onFailure);
     }
 };
 

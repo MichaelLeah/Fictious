@@ -25,7 +25,7 @@
             <textarea class="form-control" v-model="newMessage"></textarea>
         </div>
         <div class="col-xs-12 col-md-6">
-            <button class="btn btn-default">Save Message</button>
+            <button class="btn btn-default" @click="saveMessage()">Save Message</button>
         </div>
     </div>
 
@@ -71,7 +71,8 @@
             return {
                 store: AppStore,
                 contact: '',
-                conversations: ''
+                conversations: '',
+                newMessage: '',
             }
         },
 
@@ -91,12 +92,32 @@
                     function(failure) {
                         console.error(failure);
                     });
+            },
+
+            saveMessage: function() {
+                var postData = {
+                    details: this.newMessage,
+                    employee_id: 1,
+                    contact_id: this.contact.id,
+                    client_id: this.contact.client_id
+                };
+
+                var _self = this;
+                ApiService.createNewMessage(postData, 
+                    function(success) {
+                        _self.newMessage = '';
+                        populateContactConversations(_self.contact.id);
+                    },
+                    function(failure) {
+                        console.error(failure);
+                    });
             }
         },
 
         ready: function() {
             this.contact = this.store.getContact(this.$route.params.id);
             populateContactConversations(this.$route.params.id);
+            this.clientId = this.$route.params.id;
         }
     }
 

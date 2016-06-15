@@ -86,6 +86,7 @@ $app->get('/conversation/contact/{id}', function ($request, $response, $args) {
                              'Contact.name AS contact_name',
                              'Client.name AS client_name',
                              'Conversation.created_at AS datetime')
+                    ->orderBy('Conversation.created_at', 'desc')
                     ->get();
 
 
